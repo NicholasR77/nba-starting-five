@@ -4,7 +4,8 @@ import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 import useAxios from '../hooks/useAxios';
 
-import ExampleStartingFive from '../partials/StartingFive.json';
+import { PlayersResponseData } from '../types/PlayersResponse';
+import { Player } from '../types/Player';
 
 const columns: GridColDef[] = [
     { field: 'firstName', headerName: 'First name', width: 200 },
@@ -15,8 +16,19 @@ const columns: GridColDef[] = [
 ];
 
 export default function AllPlayersTable() {
-    const [ players, setPlayers ] = useState([]);
+    const [ responseData, setResponseData ] = useState<PlayersResponseData[]>([]);
 
+    const players: Player[] = [];
+    
+    if (responseData.length) {
+        responseData.forEach((data) => {
+            let currentPlayer: any = {};
+            currentPlayer.id = data['id'];
+            currentPlayer = { ...currentPlayer, ...data.attributes };
+            players.push(currentPlayer);
+        });
+    }
+   
     const { response, loading, error } = useAxios({
         method: 'get',
         url: '/players',
@@ -24,24 +36,25 @@ export default function AllPlayersTable() {
     });
 
     useEffect(() => {
-        if (response !== null) {
-            setPlayers(response);
+        if (response !== null && response['data'] !== null) {
+            setResponseData(response['data']);
         }
     }, [response]);
 
     return (
         <Box sx={{ height: 400, width: '100%' }}>
-            { loading && <p>Loading...</p> }
-            { !loading &&
+            { error && <p>{error}</p> }
+            { loading && !error && <p>Loading...</p> }
+            { !loading && !error &&
                 <DataGrid
                     rows={players}
                     columns={columns}
-                    pageSize={5}
+                    pageSize={25}
                     rowsPerPageOptions={[5]}
                     checkboxSelection
                     disableSelectionOnClick
                 />
             }
-      </Box>
+        </Box>
     )
 }

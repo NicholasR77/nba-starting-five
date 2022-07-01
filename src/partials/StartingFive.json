@@ -1,0 +1,39 @@
+{
+    "startingFive": [
+        {
+            "firstName": "Stephen",
+            "lastName": "Curry",
+            "team": "Gol",
+            "position": "G",
+            "age": 34
+        },
+        {
+            "firstName": "Devin",
+            "lastName": "Booker",
+            "team": "Pho",
+            "position": "G",
+            "age": 26
+        },
+        {
+            "firstName": "Kevin",
+            "lastName": "Durant",
+            "team": "Bro",
+            "position": "F",
+            "age": 34
+        },
+        {
+            "firstName": "Giannis",
+            "lastName": "Antetokounmpo",
+            "team": "Mil",
+            "position": "F",
+            "age": 28
+        },
+        {
+            "firstName": "Nikola",
+            "lastName": "Jokic",
+            "team": "Den",
+            "position": "C",
+            "age": 27
+        }
+    ]
+}

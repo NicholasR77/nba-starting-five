@@ -4,8 +4,11 @@ import { useState } from 'react';
 
 import PlayersCardGrid from '../components/PlayersCardGrid';
 
+import ExampleStartingFive from '../partials/StartingFive.json';
+
+
 export default function Home() {
-    const [ currentFive, setCurrentFive ] = useState([{ firstName: 'nick', lastName: 'robbins', age: 25, team: 'PHO', position: 'G' }]);
+    const [ currentFive, setCurrentFive ] = useState(ExampleStartingFive.startingFive);
 
     return (
         <Container>
@@ -17,6 +20,7 @@ export default function Home() {
                     alignItems: 'center',
                 }}
             >
+                <h2>Your Starting Five</h2>
                 <PlayersCardGrid startingFive={currentFive}/>
             </Box>
         </Container>

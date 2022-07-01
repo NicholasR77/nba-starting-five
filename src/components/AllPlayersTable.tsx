@@ -1,5 +1,8 @@
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+
+import useAxios from '../hooks/useAxios';
 
 import ExampleStartingFive from '../partials/StartingFive.json';
 
@@ -11,19 +14,34 @@ const columns: GridColDef[] = [
     { field: 'age', headerName: 'Age', type: 'number', width: 130 },
 ];
 
-const rows = ExampleStartingFive.startingFive;
-
 export default function AllPlayersTable() {
+    const [ players, setPlayers ] = useState([]);
+
+    const { response, loading, error } = useAxios({
+        method: 'get',
+        url: '/players',
+        baseURL: 'http://127.0.0.1:3001'
+    });
+
+    useEffect(() => {
+        if (response !== null) {
+            setPlayers(response);
+        }
+    }, [response]);
+
     return (
         <Box sx={{ height: 400, width: '100%' }}>
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                checkboxSelection
-                disableSelectionOnClick
-            />
+            { loading && <p>Loading...</p> }
+            { !loading &&
+                <DataGrid
+                    rows={players}
+                    columns={columns}
+                    pageSize={5}
+                    rowsPerPageOptions={[5]}
+                    checkboxSelection
+                    disableSelectionOnClick
+                />
+            }
       </Box>
     )
 }

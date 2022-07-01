@@ -9,7 +9,7 @@ export default function PlayersCardGrid(props: { startingFive: Player[] }) {
         const { firstName, lastName, age, team, position } = player;
 
         return (
-            <Grid item xs={4}>
+            <Grid item xs={4} key={firstName}>
                 <Card sx={{ minWidth: 275 }}>
                     <CardContent>
                         <h2>{position} | {firstName} {lastName}</h2>

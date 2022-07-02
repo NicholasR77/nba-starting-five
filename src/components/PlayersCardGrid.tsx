@@ -14,7 +14,6 @@ import { Player } from '../types/Player';
 export default function PlayersCardGrid(props: { currentFive: Player[], setCurrentFive: any }) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [currentPlayer, setCurrentPlayer] = useState<null | string>(null);
-
     const open = Boolean(anchorEl);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>, id: string) => {
@@ -29,6 +28,7 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
     const handleRemove = () => {
         const filteredFive = props.currentFive.filter((player: Player) => player.id !== currentPlayer);
         props.setCurrentFive(filteredFive);
+        setCurrentPlayer(null);
     };
 
     const currentFiveCards = props.currentFive.map((player) => {
@@ -37,7 +37,7 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
         return (
             <Fragment key={id}>
                 <Grid item xs={4}>
-                    <Card sx={{ minWidth: 275 }}>
+                    <Card>
                         <CardHeader 
                             action={
                                 <IconButton 
@@ -74,8 +74,12 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
     })
 
     return (
-        <Grid container spacing={2} justifyContent='center'>
-            {currentFiveCards}
-        </Grid>
+        <Fragment>
+            <h2>Your Starting Five</h2>
+            <Grid container spacing={2} justifyContent='center'>
+                {currentFiveCards}
+            </Grid>
+        </Fragment>
+       
     )
 }

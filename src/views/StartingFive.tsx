@@ -20,7 +20,6 @@ export default function StartingFive() {
                     alignItems: 'center',
                 }}
             >
-                <h2>Your Starting Five</h2>
                 <PlayersCardGrid currentFive={currentFive as Player[]} setCurrentFive={setCurrentFive}/>
             </Box>
             <Box
@@ -31,8 +30,7 @@ export default function StartingFive() {
                     alignItems: 'flex-start',
                 }}
             >
-                <h2>All Players</h2>
-                <AllPlayersTable />
+                <AllPlayersTable currentFive={currentFive as Player[]} setCurrentFive={setCurrentFive} />
             </Box>
         </Container>
     )

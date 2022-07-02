@@ -5,6 +5,7 @@ interface Player {
     age: number;
     team: string;
     position: string;
+    value: number;
 }
 
 export type { Player };

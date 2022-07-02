@@ -30,7 +30,7 @@ const useAxios = (configParams: ConfigParamsInterface) => {
 
     useEffect(() => {
         fetchData();
-    }, [configParams.url]);
+    }, []);
 
     // custom hook returns value
     return { response, error, loading };

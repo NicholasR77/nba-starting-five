@@ -33,7 +33,7 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
     };
 
     const currentFiveCards = props.currentFive.map((player) => {
-        let { id, firstName, lastName, age, team, position } = player;
+        let { id, firstName, lastName, age, team, position, value } = player;
 
         return (
             <Fragment key={id}>
@@ -48,6 +48,7 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
                                     <MoreVertIcon />
                                 </IconButton>
                             }
+                            title={`${value} points`}
                         />
                         <CardContent>
                             <h2>{position} | {firstName} {lastName}</h2>

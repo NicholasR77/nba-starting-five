@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import PlayersCardGrid from '../components/PlayersCardGrid';
 import AllPlayersTable from '../components/AllPlayersTable';
-
+import { Player } from '../types/Player';
 import ExampleStartingFive from '../partials/StartingFive.json';
 
 export default function StartingFive() {
@@ -21,7 +21,7 @@ export default function StartingFive() {
                 }}
             >
                 <h2>Your Starting Five</h2>
-                <PlayersCardGrid startingFive={currentFive}/>
+                <PlayersCardGrid currentFive={currentFive as Player[]} setCurrentFive={setCurrentFive}/>
             </Box>
             <Box
                 sx={{

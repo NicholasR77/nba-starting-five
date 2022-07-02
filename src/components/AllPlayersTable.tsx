@@ -23,7 +23,7 @@ const columns: GridColDef[] = [
 
 export default function AllPlayersTable(props: { currentFive: Player[], setCurrentFive: any }) {
     const [ responseData, setResponseData ] = useState<PlayersResponseData[]>([]);
-    const [ selectedPlayers, setSelectedPlayers ] = useState([]);
+    const [ selectedPlayers, setSelectedPlayers ] = useState<Player[] | []>([]);
     const [ alert, setAlert ] = useState<null | string>(null);
 
     const players: Player[] = [];
@@ -49,15 +49,36 @@ export default function AllPlayersTable(props: { currentFive: Player[], setCurre
         }
     }, [response]);
 
+    useEffect(() => {
+        validNumberOfPlayers();
+    }, [selectedPlayers]);
+
+    const validNumberOfPlayers = () => {
+        if (maxPlayers - props.currentFive.length >= selectedPlayers.length) {
+            setAlert(null);
+            return true;
+        } else {
+            setAlert('You have too many players selected. Please unselect players, or adjust your current starting five.')
+            return false;
+        }
+    };
+
     const handleSelectionModelChange = (e: any) => {
-        setSelectedPlayers(e);
+        if (!e.length) {
+            setSelectedPlayers([])
+        } else {
+            const player = players.find((player) => player.id === e[e.length - 1]);
+
+            if (player) {
+                setSelectedPlayers([ ...selectedPlayers, player ]);
+            }
+        }  
     };
 
     const handleOnClick = () => {
-        if (selectedPlayers.length && maxPlayers - props.currentFive.length >= selectedPlayers.length) {
-            setAlert(null);
-        } else {
-            setAlert('You have too many players selected. Please unselect players, or adjust your current starting five.')
+        if (selectedPlayers.length && validNumberOfPlayers()) {
+            props.setCurrentFive([ ...props.currentFive, ...selectedPlayers ]);
+            setSelectedPlayers([]);
         }
     };
 

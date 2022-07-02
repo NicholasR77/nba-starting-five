@@ -29,6 +29,7 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
         const filteredFive = props.currentFive.filter((player: Player) => player.id !== currentPlayer);
         props.setCurrentFive(filteredFive);
         setCurrentPlayer(null);
+        handleClose();
     };
 
     const currentFiveCards = props.currentFive.map((player) => {

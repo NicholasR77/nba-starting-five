@@ -8,7 +8,7 @@ import { Player } from '../types/Player';
 import ExampleStartingFive from '../partials/StartingFive.json';
 
 export default function StartingFive() {
-    const [ currentFive, setCurrentFive ] = useState(ExampleStartingFive.startingFive);
+    const [ currentFive, setCurrentFive ] = useState(ExampleStartingFive.startingFive as Player[]);
 
     return (
         <Container>

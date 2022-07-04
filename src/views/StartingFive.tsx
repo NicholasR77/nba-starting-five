@@ -7,8 +7,6 @@ import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 
-import useAxios from '../hooks/useAxios';
-
 import PlayersCardGrid from '../components/PlayersCardGrid';
 import AllPlayersTable from '../components/AllPlayersTable';
 
@@ -18,57 +16,9 @@ export default function StartingFive() {
     const maxPlayers = 5;
     const maxValue = 15;
     const [ currentFive, setCurrentFive ] = useState<Player[]>([]);
-    const [ originalPlayers, setOriginalPlayers ] = useState<Player[]>([]);
-    const [ filteredPlayers, setFilteredPlayers ] = useState<Player[]>([]);
     const [ totalValue, setTotalValue ] = useState(0);
-   
-    const { response, loading, error } = useAxios({
-        method: 'get',
-        url: '/players',
-        baseURL: 'http://127.0.0.1:3001'
-    });
-    
-    useEffect(() => {
-        if (response) {
-            const responseData: any[] = response['data'];
 
-            if (responseData && responseData.length) {
-                const currentPlayers: Player[] = [];
-
-                responseData.forEach((data) => {
-                    let currentPlayer: any = {};
-                    currentPlayer.id = data['id'];
-                    currentPlayer = { ...currentPlayer, ...data.attributes };
-                    currentPlayers.push(currentPlayer);
-                });
-
-                setOriginalPlayers(currentPlayers);
-                setFilteredPlayers(currentPlayers);
-            }
-        }
-    }, [response]);
-
-    useEffect(() => {
-        if (filteredPlayers.length) {
-            const filteredPlayers: Player[] = [];
-
-            for (const player of originalPlayers) {
-                let found = false;
-                if (found) continue;
-                for (const current of currentFive) {
-                    if (player.id === current.id) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found) filteredPlayers.push(player);
-            }
-
-            setFilteredPlayers(filteredPlayers);
-        }
-    }, [currentFive]);
-
+    // Adjusting the total point value for starting five changes
     useEffect(() => {
         if (currentFive.length) {
             let tempTotal: number = 0;
@@ -82,10 +32,6 @@ export default function StartingFive() {
             setTotalValue(0);
         }
     }, [currentFive]);
-
-    const handleClick = () => {
-        console.log('Clicked')
-    };
 
     return (
         <Container>
@@ -104,7 +50,7 @@ export default function StartingFive() {
                             <HelpIcon />
                         </Tooltip>
                     </Stack>
-                    <Button variant='outlined' onClick={handleClick}>Submit Selected Players</Button>
+                    <Button variant='outlined'>Submit Selected Players</Button>
                 </Stack>
                 
                 
@@ -133,18 +79,13 @@ export default function StartingFive() {
                     alignItems: 'flex-start',
                 }}
             >
-                { error && <p>{error}</p> }
-                { loading && !error && <p>Loading...</p> }
-                { !loading && !error &&
-                    <AllPlayersTable 
-                        currentFive={currentFive as Player[]}
-                        setCurrentFive={setCurrentFive}
-                        players={filteredPlayers}
-                        totalValue={totalValue}
-                        maxPlayers={maxPlayers}
-                        maxValue={maxValue}
-                    />
-                }
+                <AllPlayersTable 
+                    currentFive={currentFive as Player[]}
+                    setCurrentFive={setCurrentFive}
+                    totalValue={totalValue}
+                    maxPlayers={maxPlayers}
+                    maxValue={maxValue}
+                />
             </Box>
         </Container>
     )

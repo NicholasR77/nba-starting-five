@@ -97,7 +97,7 @@ export default function AllPlayersTable(props: AllPlayersTableProps) {
                         {alert}
                     </Alert>
                 }
-                <Stack direction='row' justifyContent='space-between' style={{ 'paddingBottom': '20px' }}>
+                <Stack direction='row' justifyContent='space-between' alignItems='center' style={{ 'paddingBottom': '20px' }}>
                     <h2>All Players</h2>
                     <Button variant='outlined' onClick={handleOnClick} disabled={isButtonDisabled()}>Add Selected Players</Button>
                 </Stack>

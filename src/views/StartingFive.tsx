@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
+import Tooltip from '@mui/material/Tooltip';
+import HelpIcon from '@mui/icons-material/Help';
+import Stack from '@mui/material/Stack';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
 
 import useAxios from '../hooks/useAxios';
 
@@ -78,6 +83,10 @@ export default function StartingFive() {
         }
     }, [currentFive]);
 
+    const handleClick = () => {
+        console.log('Clicked')
+    };
+
     return (
         <Container>
             <Box
@@ -88,7 +97,17 @@ export default function StartingFive() {
                     alignItems: 'center',
                 }}
             >
-                <h2>Your Starting Five</h2>
+                <Stack direction='row' justifyContent='space-between' alignItems='center' style={{ 'width': '100%', 'paddingBottom': '20px' }}>
+                    <Stack direction='row' justifyContent='space-between' alignItems='center'>
+                        <h2>Your Starting Five</h2>
+                        <Tooltip title={`Pick 5 NBA players whole total point value is less than or equal to ${maxValue}.`} style={{ paddingLeft: '5px' }}>
+                            <HelpIcon />
+                        </Tooltip>
+                    </Stack>
+                    <Button variant='outlined' onClick={handleClick}>Submit Selected Players</Button>
+                </Stack>
+                
+                
                 { !currentFive.length && <p>No players selected...</p> }
                 { currentFive.length > 0 && <PlayersCardGrid currentFive={currentFive as Player[]} setCurrentFive={setCurrentFive}/> }
             </Box>
@@ -100,11 +119,15 @@ export default function StartingFive() {
                     alignItems: 'center',
                 }}
             >
-                <h2>Total Point Value: {totalValue}</h2>
+                <h3>Available Points: {maxValue - totalValue}</h3>
+            </Box>
+            <Box sx={{ marginTop: 8 }}>
+                <Divider />
             </Box>
             <Box
                 sx={{
                     marginTop: 8,
+                    marginBottom: 10,
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'flex-start',

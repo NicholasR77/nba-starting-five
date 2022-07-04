@@ -73,7 +73,7 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
                 </Menu>
             </Fragment>
         )
-    })
+    });
 
     return (
         <Fragment>

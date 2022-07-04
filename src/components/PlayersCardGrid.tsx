@@ -52,8 +52,8 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
                         />
                         <CardContent>
                             <h2>{position} | {firstName} {lastName}</h2>
-                            <p>{age} years old</p>
-                            <p>Plays for {team}</p>
+                            <p>Team: {team}</p>
+                            <p>Age: {age}</p>
                         </CardContent>
                     </Card>
                 </Grid>

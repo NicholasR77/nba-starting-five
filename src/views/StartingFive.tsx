@@ -12,9 +12,12 @@ import { Player } from '../types/Player';
 import ExampleStartingFive from '../partials/StartingFive.json';
 
 export default function StartingFive() {
-    const [ currentFive, setCurrentFive ] = useState(ExampleStartingFive.startingFive as Player[]);
+    const maxPlayers = 5;
+    const maxValue = 15;
+    const [ currentFive, setCurrentFive ] = useState<Player[]>(ExampleStartingFive.startingFive as Player[]);
     const [ originalPlayers, setOriginalPlayers ] = useState<Player[]>([]);
     const [ filteredPlayers, setFilteredPlayers ] = useState<Player[]>([]);
+    const [ totalValue, setTotalValue ] = useState(0);
    
     const { response, loading, error } = useAxios({
         method: 'get',
@@ -23,7 +26,7 @@ export default function StartingFive() {
     });
     
     useEffect(() => {
-        if (response !== null) {
+        if (response) {
             const responseData: any[] = response['data'];
 
             if (responseData && responseData.length) {
@@ -63,6 +66,18 @@ export default function StartingFive() {
         }
     }, [currentFive]);
 
+    useEffect(() => {
+        if (currentFive.length) {
+            let tempTotal: number = 0;
+
+            currentFive.forEach((player) => {
+                tempTotal += player.value;
+            });
+
+            setTotalValue(tempTotal);
+        }
+    }, [currentFive]);
+
     return (
         <Container>
             <Box
@@ -80,13 +95,30 @@ export default function StartingFive() {
                     marginTop: 8,
                     display: 'flex',
                     flexDirection: 'column',
+                    alignItems: 'center',
+                }}
+            >
+                <h2>Total Point Value: {totalValue}</h2>
+            </Box>
+            <Box
+                sx={{
+                    marginTop: 8,
+                    display: 'flex',
+                    flexDirection: 'column',
                     alignItems: 'flex-start',
                 }}
             >
                 { error && <p>{error}</p> }
                 { loading && !error && <p>Loading...</p> }
                 { !loading && !error &&
-                    <AllPlayersTable currentFive={currentFive as Player[]} setCurrentFive={setCurrentFive} players={filteredPlayers} />
+                    <AllPlayersTable 
+                        currentFive={currentFive as Player[]}
+                        setCurrentFive={setCurrentFive}
+                        players={filteredPlayers}
+                        totalValue={totalValue}
+                        maxPlayers={maxPlayers}
+                        maxValue={maxValue}
+                    />
                 }
             </Box>
         </Container>

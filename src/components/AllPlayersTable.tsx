@@ -7,8 +7,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 import { Player } from '../types/Player';
-
-const maxPlayers = 5;
+import { AllPlayersTableProps } from '../types/AllPlayersTable';
 
 const columns: GridColDef[] = [
     { field: 'firstName', headerName: 'First name', width: 200 },
@@ -19,16 +18,24 @@ const columns: GridColDef[] = [
     { field: 'value', headerName: 'Value', type: 'number', width: 130 },
 ];
 
-export default function AllPlayersTable(props: { currentFive: Player[], setCurrentFive: any, players: Player[] }) {
-    const [ selectedPlayers, setSelectedPlayers ] = useState<Player[] | []>([]);
+export default function AllPlayersTable(props: AllPlayersTableProps) {
+    const [ selectedPlayers, setSelectedPlayers ] = useState<Player[]>([]);
     const [ alert, setAlert ] = useState<null | string>(null);
 
     useEffect(() => {
-        validNumberOfPlayers();
+        validSelection();
     }, [selectedPlayers]);
 
+    const validSelection = () => {
+        if (validNumberOfPlayers() && validPointTotal()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     const validNumberOfPlayers = () => {
-        if (maxPlayers - props.currentFive.length >= selectedPlayers.length) {
+        if (props.maxPlayers - props.currentFive.length >= selectedPlayers.length) {
             setAlert(null);
             return true;
         } else {
@@ -36,6 +43,23 @@ export default function AllPlayersTable(props: { currentFive: Player[], setCurre
             return false;
         }
     };
+
+    const validPointTotal = () => {
+        if (!selectedPlayers.length) return false;
+
+        let tempTotal = 0;
+
+        selectedPlayers.forEach((player) => {
+            tempTotal += player.value;
+        });
+
+        if (tempTotal + props.totalValue <= props.maxValue) {
+            return true;
+        } else {
+            setAlert(`You point total is above the max of ${props.maxValue}. Please unselect players, or adjust your current starting five.`)
+            return false;
+        }
+    }
 
     const handleSelectionModelChange = (e: any) => {
         if (!e.length) {
@@ -50,11 +74,19 @@ export default function AllPlayersTable(props: { currentFive: Player[], setCurre
     };
 
     const handleOnClick = () => {
-        if (selectedPlayers.length && validNumberOfPlayers()) {
+        if (selectedPlayers.length && validSelection()) {
             props.setCurrentFive([ ...props.currentFive, ...selectedPlayers ]);
             setSelectedPlayers([]);
         }
     };
+
+    const isButtonDisabled = () => {
+        if (!selectedPlayers.length || alert) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     return (
         <Box sx={{ height: 400, width: '100%' }}>
@@ -67,7 +99,7 @@ export default function AllPlayersTable(props: { currentFive: Player[], setCurre
                 }
                 <Stack direction='row' justifyContent='space-between' style={{ 'paddingBottom': '20px' }}>
                     <h2>All Players</h2>
-                    <Button variant='outlined' onClick={handleOnClick} disabled={!selectedPlayers.length}>Add Selected Players</Button>
+                    <Button variant='outlined' onClick={handleOnClick} disabled={isButtonDisabled()}>Add Selected Players</Button>
                 </Stack>
                 <DataGrid
                     rows={props.players}

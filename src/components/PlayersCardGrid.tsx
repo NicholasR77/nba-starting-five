@@ -77,7 +77,6 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
 
     return (
         <Fragment>
-            <h2>Your Starting Five</h2>
             <Grid container spacing={2} justifyContent='center'>
                 {currentFiveCards}
             </Grid>

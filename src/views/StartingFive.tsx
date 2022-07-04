@@ -9,12 +9,10 @@ import AllPlayersTable from '../components/AllPlayersTable';
 
 import { Player } from '../types/Player';
 
-import ExampleStartingFive from '../partials/StartingFive.json';
-
 export default function StartingFive() {
     const maxPlayers = 5;
     const maxValue = 15;
-    const [ currentFive, setCurrentFive ] = useState<Player[]>(ExampleStartingFive.startingFive as Player[]);
+    const [ currentFive, setCurrentFive ] = useState<Player[]>([]);
     const [ originalPlayers, setOriginalPlayers ] = useState<Player[]>([]);
     const [ filteredPlayers, setFilteredPlayers ] = useState<Player[]>([]);
     const [ totalValue, setTotalValue ] = useState(0);
@@ -75,6 +73,8 @@ export default function StartingFive() {
             });
 
             setTotalValue(tempTotal);
+        } else {
+            setTotalValue(0);
         }
     }, [currentFive]);
 
@@ -88,7 +88,9 @@ export default function StartingFive() {
                     alignItems: 'center',
                 }}
             >
-                <PlayersCardGrid currentFive={currentFive as Player[]} setCurrentFive={setCurrentFive}/>
+                <h2>Your Starting Five</h2>
+                { !currentFive.length && <p>No players selected...</p> }
+                { currentFive.length > 0 && <PlayersCardGrid currentFive={currentFive as Player[]} setCurrentFive={setCurrentFive}/> }
             </Box>
             <Box
                 sx={{

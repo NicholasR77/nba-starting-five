@@ -7,6 +7,8 @@ import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 
+import useAxios from '../hooks/useAxios';
+
 import PlayersCardGrid from '../components/PlayersCardGrid';
 import AllPlayersTable from '../components/AllPlayersTable';
 
@@ -17,9 +19,27 @@ export default function StartingFive() {
     const maxValue = 15;
     const [ currentFive, setCurrentFive ] = useState<Player[]>([]);
     const [ totalValue, setTotalValue ] = useState(0);
+    const [ submitted, setSubmitted ] = useState(false);
+    const [ requestSettings, setRequestSettings ] = useState({});
+
+    const { response, loading, error } = useAxios(requestSettings);
+
+    useEffect(() => {
+        console.log('hello 2')
+        setRequestSettings({
+            method: 'post',
+            url: '/compositions',
+            baseURL: 'http://127.0.0.1:3001',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: JSON.stringify({ composition: { currentFive } }),
+        })
+    }, [submitted])
 
     // Adjusting the total point value for starting five changes
     useEffect(() => {
+        
         if (currentFive.length) {
             let tempTotal: number = 0;
 
@@ -32,6 +52,16 @@ export default function StartingFive() {
             setTotalValue(0);
         }
     }, [currentFive]);
+
+    useEffect(() => {
+        console.log(response);
+    }, [response])
+    
+    const handleOnClick = () => {
+        console.log('Hello')
+        setSubmitted(!submitted)
+        // setSubmitted(false)
+    };
 
     return (
         <Container>
@@ -50,7 +80,7 @@ export default function StartingFive() {
                             <HelpIcon />
                         </Tooltip>
                     </Stack>
-                    <Button variant='outlined'>Submit Selected Players</Button>
+                    <Button onClick={handleOnClick} variant='outlined'>Submit Selected Players</Button>
                 </Stack>
                 
                 

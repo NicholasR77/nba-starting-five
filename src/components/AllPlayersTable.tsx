@@ -180,7 +180,7 @@ export default function AllPlayersTable(props: AllPlayersTableProps) {
                         rows={filteredPlayers}
                         columns={columns}
                         pageSize={25}
-                        rowsPerPageOptions={[]}
+                        rowsPerPageOptions={[25]}
                         disableColumnMenu={true}
                         onSelectionModelChange={(e) => handleSelectionModelChange(e)}
                         checkboxSelection

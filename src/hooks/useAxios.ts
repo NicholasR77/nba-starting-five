@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 
 interface ConfigParamsInterface {
-    url: string;
-    method: string;
-    baseURL: string;
-    body?: any;
+    url?: string;
+    method?: string;
+    baseURL?: string;
+    data?: any;
     headers?: any;
 }
 
@@ -29,8 +29,9 @@ const useAxios = (configParams: ConfigParamsInterface) => {
     };
 
     useEffect(() => {
+        console.log('hello 3')
         fetchData();
-    }, []);
+    }, [configParams?.data]);
 
     // custom hook returns value
     return { response, error, loading };

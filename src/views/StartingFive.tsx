@@ -8,6 +8,7 @@ import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
 
 import useAxios from '../hooks/useAxios';
+import useCompositionSerializer from '../hooks/useCompositionSerializer';
 
 import PlayersCardGrid from '../components/PlayersCardGrid';
 import AllPlayersTable from '../components/AllPlayersTable';
@@ -23,9 +24,9 @@ export default function StartingFive() {
     const [ requestSettings, setRequestSettings ] = useState({});
 
     const { response, loading, error } = useAxios(requestSettings);
+    const { playerIds } = useCompositionSerializer(currentFive);
 
     useEffect(() => {
-        console.log('hello 2')
         setRequestSettings({
             method: 'post',
             url: '/compositions',
@@ -33,7 +34,7 @@ export default function StartingFive() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            data: JSON.stringify({ composition: { currentFive } }),
+            data: JSON.stringify({ composition: { player_ids: playerIds } }),
         })
     }, [submitted])
 
@@ -58,7 +59,6 @@ export default function StartingFive() {
     }, [response])
     
     const handleOnClick = () => {
-        console.log('Hello')
         setSubmitted(!submitted)
         // setSubmitted(false)
     };

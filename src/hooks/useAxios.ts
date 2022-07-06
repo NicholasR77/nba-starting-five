@@ -29,7 +29,6 @@ const useAxios = (configParams: ConfigParamsInterface) => {
     };
 
     useEffect(() => {
-        console.log('hello 3')
         fetchData();
     }, [configParams?.data]);
 

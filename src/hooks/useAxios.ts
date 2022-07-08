@@ -10,7 +10,8 @@ interface ConfigParamsInterface {
 }
 
 const useAxios = (configParams: ConfigParamsInterface) => {
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState<any>(null);
+    const [status, setStatus] = useState<null | number>(null);
     const [error, setError] = useState('');
     const [loading, setloading] = useState(true);
 
@@ -18,7 +19,8 @@ const useAxios = (configParams: ConfigParamsInterface) => {
         axios
             .request(configParams)
             .then((res) => {
-                setResponse(res.data);
+                setStatus(res?.status);
+                setResponse(res?.data);
             })
             .catch((err) => {
                 setError(err);
@@ -33,7 +35,7 @@ const useAxios = (configParams: ConfigParamsInterface) => {
     }, [configParams?.data]);
 
     // custom hook returns value
-    return { response, error, loading };
+    return { response, status, error, loading };
 };
 
 export default useAxios;

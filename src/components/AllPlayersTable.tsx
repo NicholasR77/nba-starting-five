@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 import useAxios from '../hooks/useAxios';
@@ -33,9 +32,9 @@ export default function AllPlayersTable(props: AllPlayersTableProps) {
     const [ filteredPlayers, setFilteredPlayers ] = useState<Player[]>([]);
     const [ selectedPlayers, setSelectedPlayers ] = useState<Player[]>([]);
     const [ selectedPlayersIds, setSelectedPlayersIds ] = useState<string[]>([]);
-    const [ alert, setAlert ] = useState<null | string>(null);
+    const [ alert, setAlert ] = useState<null | { type: string, message: string }>(null);
 
-    const { response, loading, error } = useAxios({
+    const { response, status, loading, error } = useAxios({
         method: 'get',
         url: '/players',
         baseURL: 'http://127.0.0.1:3001'
@@ -84,6 +83,7 @@ export default function AllPlayersTable(props: AllPlayersTableProps) {
         }
     }, [props.currentFive]);
 
+    // When the selected players changes, check whether the selections are valid
     useEffect(() => {
         validSelection();
     }, [selectedPlayers]);
@@ -96,16 +96,18 @@ export default function AllPlayersTable(props: AllPlayersTableProps) {
         }
     }
 
+    // Check to see if the total number of selected players is above the max allowed
     const validNumberOfPlayers = () => {
         if (props.maxPlayers - props.currentFive.length >= selectedPlayers.length) {
             setAlert(null);
             return true;
         } else {
-            setAlert('You have too many players selected. Please unselect players, or adjust your current starting five.')
+            setAlert({ type: 'warning', message: 'You have too many players selected. Please unselect players, or adjust your current starting five.' })
             return false;
         }
     };
 
+    // Check to see if the total value of all selected players is above the max allowed
     const validPointTotal = () => {
         if (!selectedPlayers.length) return false;
 
@@ -118,33 +120,40 @@ export default function AllPlayersTable(props: AllPlayersTableProps) {
         if (tempTotal + props.totalValue <= props.maxValue) {
             return true;
         } else {
-            setAlert(`You point total is above the max of ${props.maxValue}. Please unselect players, or adjust your current starting five.`)
+            setAlert({ type: 'warning', message: `You point total is above the max of ${props.maxValue}. Please unselect players, or adjust your current starting five.` });
             return false;
         }
     }
 
-    const handleSelectionModelChange = (selectedIds: any) => {
-        if (!selectedIds.length) {
+    // When a player is checked, add them to the selected players
+    // If a player is unchecked, remove them from the selected players
+    const handleSelectionModelChange = (eventIds: any) => {
+        if (!eventIds.length) {
             setSelectedPlayersIds([]);
             setSelectedPlayers([]);
         } else {
-            let deletedPlayers = selectedPlayersIds.filter(x => !selectedIds.includes(x));
+            // Compare the ids of the event to the current ids selected
+            // The difference between the two are the players that are deleted
+            let deletedPlayers = selectedPlayersIds.filter(id => !eventIds.includes(id));
 
             if (deletedPlayers.length) {
-                const removed = selectedPlayers.filter((player) => !deletedPlayers.includes(player.id));
-                setSelectedPlayers(removed);
+                 // If we have deleted players, remove them from the current selection of players
+                const removeDeleted = selectedPlayers.filter((player) => !deletedPlayers.includes(player.id));
+                setSelectedPlayers(removeDeleted);
             } else {
-                const player = filteredPlayers.find((player) => player.id === selectedIds[selectedIds.length - 1]);
+                // Find the player's data from the players prop
+                const player = filteredPlayers.find((player) => player.id === eventIds[eventIds.length - 1]);
 
-                if (player) {
-                    setSelectedPlayers([ ...selectedPlayers, player ]);
-                }
+                 // Add the player data to the current selection of players 
+                if (player) setSelectedPlayers([ ...selectedPlayers, player ]);
             }
 
-            setSelectedPlayersIds(selectedIds);
+            // Reset the current selection of player ids to the event ids passed in
+            setSelectedPlayersIds(eventIds);
         }  
     };
 
+    // If our current player selections are valid, add them to the starting five
     const handleOnClick = () => {
         if (selectedPlayers.length && validSelection()) {
             props.setCurrentFive([ ...props.currentFive, ...selectedPlayers ]);
@@ -161,12 +170,11 @@ export default function AllPlayersTable(props: AllPlayersTableProps) {
     }
 
     return (
-        <Box sx={{ height: 400, width: '100%' }}>
+        <Box sx={{ height: 400, width: '100%', marginBottom: '80px' }}>
             <Fragment>
                 { alert && 
-                    <Alert severity='warning' style={{ 'marginBottom': '20px' }}>
-                        <AlertTitle>Warning</AlertTitle>
-                        {alert}
+                    <Alert severity={alert.type as any} style={{ 'marginBottom': '20px' }}>
+                        {alert.message}
                     </Alert>
                 }
                 <Stack direction='row' justifyContent='space-between' alignItems='center' style={{ 'paddingBottom': '20px' }}>
@@ -179,8 +187,8 @@ export default function AllPlayersTable(props: AllPlayersTableProps) {
                     <DataGrid
                         rows={filteredPlayers}
                         columns={columns}
-                        pageSize={25}
-                        rowsPerPageOptions={[25]}
+                        pageSize={50}
+                        rowsPerPageOptions={[50]}
                         disableColumnMenu={true}
                         onSelectionModelChange={(e) => handleSelectionModelChange(e)}
                         checkboxSelection

@@ -6,6 +6,9 @@ import HelpIcon from '@mui/icons-material/Help';
 import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
+import Modal from '@mui/material/Modal';
+import TextField from '@mui/material/TextField';
 
 import useAxios from '../hooks/useAxios';
 import useCompositionSerializer from '../hooks/useCompositionSerializer';
@@ -16,17 +19,24 @@ import AllPlayersTable from '../components/AllPlayersTable';
 import { Player } from '../types/Player';
 
 export default function StartingFive() {
-    const maxPlayers = 5;
-    const maxValue = 15;
     const [ currentFive, setCurrentFive ] = useState<Player[]>([]);
     const [ totalValue, setTotalValue ] = useState(0);
     const [ submitted, setSubmitted ] = useState(false);
     const [ requestSettings, setRequestSettings ] = useState({});
+    const [ alert, setAlert ] = useState<null | { type: string, message: string, location: string }>(null);
+    const [ open, setOpen ] = useState(false);
+    const [ author, setAuthor ] = useState('');
 
-    const { response, loading, error } = useAxios(requestSettings);
+    const maxPlayers = 5;
+    const maxValue = 15;
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+
+    const { response, status, loading, error } = useAxios(requestSettings);
     const { playerIds } = useCompositionSerializer(currentFive);
 
     useEffect(() => {
+        if (!submitted) return;
         setRequestSettings({
             method: 'post',
             url: '/compositions',
@@ -34,13 +44,12 @@ export default function StartingFive() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            data: JSON.stringify({ composition: { player_ids: playerIds } }),
+            data: JSON.stringify({ composition: { player_ids: playerIds, author } }),
         })
     }, [submitted])
 
     // Adjusting the total point value for starting five changes
     useEffect(() => {
-        
         if (currentFive.length) {
             let tempTotal: number = 0;
 
@@ -55,12 +64,37 @@ export default function StartingFive() {
     }, [currentFive]);
 
     useEffect(() => {
-        console.log(response);
-    }, [response])
+        if (!status) return;
+
+        if (status === 201) {
+            setAlert({ type: 'success', message: `Submitted successfully`, location: 'modal' })
+        } else {
+            setAlert({ type: 'danger', message: error, location: 'modal' })
+        }
+
+        setCurrentFive([]);
+    }, [response]);
+
+    const validNumberOfPlayers = () => {
+        if (currentFive.length === 5) {
+            setAlert(null);
+            return true;
+        } else {
+            setAlert({ 
+                type: 'warning', 
+                message: `Not enough players selected. Please select ${maxPlayers} players before submitting.`, 
+                location: 'body' 
+            })
+            return false;
+        }
+    }
     
-    const handleOnClick = () => {
-        setSubmitted(!submitted)
-        // setSubmitted(false)
+    const handleOnClickSubmitStart = () => {
+        if (validNumberOfPlayers()) handleOpen();
+    };
+
+    const handleOnClickSubmitFinish = () => {
+        if (author) setSubmitted(true);
     };
 
     return (
@@ -80,10 +114,13 @@ export default function StartingFive() {
                             <HelpIcon />
                         </Tooltip>
                     </Stack>
-                    <Button onClick={handleOnClick} variant='outlined'>Submit Selected Players</Button>
+                    <Button onClick={handleOnClickSubmitStart} variant='outlined' disabled={currentFive.length !== 5}>Submit Selected Players</Button>
                 </Stack>
-                
-                
+                { alert && alert.location === 'body' && 
+                    <Alert severity={alert.type as any} style={{ 'marginBottom': '20px' }}>
+                        {alert.message}
+                    </Alert>
+                }
                 { !currentFive.length && <p>No players selected...</p> }
                 { currentFive.length > 0 && <PlayersCardGrid currentFive={currentFive as Player[]} setCurrentFive={setCurrentFive}/> }
             </Box>
@@ -117,6 +154,37 @@ export default function StartingFive() {
                     maxValue={maxValue}
                 />
             </Box>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby='modal-modal-title'
+                aria-describedby='modal-modal-description'
+                >
+                <Box 
+                    sx={{
+                        position: 'absolute' as 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 400,
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                    }}
+                >
+                    { alert && alert.location === 'modal' &&
+                        <Alert severity={alert.type as any} style={{ 'marginBottom': '20px' }}>
+                            {alert.message}
+                        </Alert>
+                    }
+                    <p>Please enter a username to submit your composition:</p>
+                    <Stack direction='row' justifyContent='center' alignItems='center'>
+                        <TextField id='outlined-basic' label='Username' variant='outlined' required onChange={(e) => { setAuthor(e.target.value) }} value={author} />
+                        <Button onClick={handleOnClickSubmitFinish} variant='outlined' style={{ marginLeft: '10px' }}>Submit</Button>
+                    </Stack>
+                </Box>
+            </Modal>
         </Container>
     )
 }

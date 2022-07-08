@@ -1,4 +1,6 @@
 import { Fragment, useState } from 'react';
+
+// MUI
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -9,6 +11,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
+// Types
 import { Player } from '../types/Player';
 
 export default function PlayersCardGrid(props: { currentFive: Player[], setCurrentFive: any }) {
@@ -16,6 +19,8 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
     const [currentPlayer, setCurrentPlayer] = useState<null | string>(null);
     const open = Boolean(anchorEl);
 
+    // Set the current player to id of the player from the player card
+    // Set the anchor as the player card
     const handleClick = (event: React.MouseEvent<HTMLElement>, id: string) => {
         setCurrentPlayer(id);
         setAnchorEl(event.currentTarget);
@@ -25,6 +30,9 @@ export default function PlayersCardGrid(props: { currentFive: Player[], setCurre
         setAnchorEl(null);
     };
 
+    // Remove the player from the current five
+    // Reset current player
+    // Close the remove dropdown
     const handleRemove = () => {
         const filteredFive = props.currentFive.filter((player: Player) => player.id !== currentPlayer);
         props.setCurrentFive(filteredFive);

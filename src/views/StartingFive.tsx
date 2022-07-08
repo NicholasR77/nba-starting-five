@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
+// MUI
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
@@ -10,22 +14,26 @@ import Alert from '@mui/material/Alert';
 import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 
+// Custom Hooks
 import useAxios from '../hooks/useAxios';
 import useCompositionSerializer from '../hooks/useCompositionSerializer';
 
+// Components
 import PlayersCardGrid from '../components/PlayersCardGrid';
 import AllPlayersTable from '../components/AllPlayersTable';
 
+// Types
 import { Player } from '../types/Player';
+import { ConfigParamsInterface } from '../types/useAxios';
 
 export default function StartingFive() {
     const [ currentFive, setCurrentFive ] = useState<Player[]>([]);
-    const [ totalValue, setTotalValue ] = useState(0);
-    const [ submitted, setSubmitted ] = useState(false);
-    const [ requestSettings, setRequestSettings ] = useState({});
+    const [ totalValue, setTotalValue ] = useState<number>(0);
+    const [ submitted, setSubmitted ] = useState<boolean>(false);
+    const [ requestSettings, setRequestSettings ] = useState<{} | ConfigParamsInterface>({});
     const [ alert, setAlert ] = useState<null | { type: string, message: string, location: string }>(null);
-    const [ open, setOpen ] = useState(false);
-    const [ author, setAuthor ] = useState('');
+    const [ open, setOpen ] = useState<boolean>(false);
+    const [ author, setAuthor ] = useState<string>('');
 
     const maxPlayers = 5;
     const maxValue = 15;
@@ -34,9 +42,12 @@ export default function StartingFive() {
 
     const { response, status, loading, error } = useAxios(requestSettings);
     const { playerIds } = useCompositionSerializer(currentFive);
+    const navigate = useNavigate();
 
+    // If we submit something, make a request with the submission
     useEffect(() => {
         if (!submitted) return;
+
         setRequestSettings({
             method: 'post',
             url: '/compositions',
@@ -63,16 +74,20 @@ export default function StartingFive() {
         }
     }, [currentFive]);
 
+    // If we recieve a response back from the server, add that response status as an alert
+    // If the response is successful navigate to the compositions
     useEffect(() => {
         if (!status) return;
 
         if (status === 201) {
             setAlert({ type: 'success', message: `Submitted successfully`, location: 'modal' })
+
+            setTimeout(() => {
+                navigate('/compositions');
+            }, 2000);
         } else {
             setAlert({ type: 'danger', message: error, location: 'modal' })
         }
-
-        setCurrentFive([]);
     }, [response]);
 
     const validNumberOfPlayers = () => {

@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
+
 import axios from 'axios';
 
-interface ConfigParamsInterface {
-    url?: string;
-    method?: string;
-    baseURL?: string;
-    data?: any;
-    headers?: any;
-}
+// Types
+import { ConfigParamsInterface } from '../types/useAxios';
 
 const useAxios = (configParams: ConfigParamsInterface) => {
     const [response, setResponse] = useState<any>(null);

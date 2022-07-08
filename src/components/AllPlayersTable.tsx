@@ -1,12 +1,16 @@
 import { useState, useEffect, Fragment } from 'react';
+
+// MUI
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
+// Custom Hooks
 import useAxios from '../hooks/useAxios';
 
+// Types
 import { Player } from '../types/Player';
 import { AllPlayersTableProps } from '../types/AllPlayersTable';
 

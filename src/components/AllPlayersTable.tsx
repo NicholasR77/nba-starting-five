@@ -17,10 +17,10 @@ import { AllPlayersTableProps } from '../types/AllPlayersTable';
 const columns: GridColDef[] = [
     { field: 'firstName', headerName: 'First name', width: 200 },
     { field: 'lastName', headerName: 'Last name', width: 200 },
+    { field: 'value', headerName: 'Point Value', type: 'number', width: 100 },
     { field: 'team', headerName: 'Team', width: 130 },
     { field: 'position', headerName: 'Position', width: 130 },
     { field: 'age', headerName: 'Age', type: 'number', width: 130 },
-    { field: 'value', headerName: 'Point Value', type: 'number', width: 130 },
     { field: 'heightInches', headerName: 'Height (inches)', type: 'number', width: 130 },
     { field: 'ppg', headerName: 'Points', type: 'number', width: 130 },
     { field: 'fgPercent', headerName: 'FG Percent', type: 'number', width: 130 },
